@@ -1,6 +1,4 @@
 """Functions to execute the Pixel3DMM pipeline from Nuke."""
-from pathlib import Path
-from omegaconf import OmegaConf
 
 from pixel3dmm import env_paths
 from scripts.run_preprocessing import main as run_preprocessing
@@ -11,6 +9,13 @@ from .utils import video_to_name
 
 
 def _run_inference(video_name: str, prediction_type: str) -> None:
+    try:
+        from omegaconf import OmegaConf
+    except ImportError as exc:
+        raise ImportError(
+            "OmegaConf is required for inference. Install it with 'pip install omegaconf'."
+        ) from exc
+
     cfg = OmegaConf.load(f"{env_paths.CODE_BASE}/configs/base.yaml")
     cfg.model.prediction_type = prediction_type
     cfg.video_name = video_name
@@ -18,6 +23,13 @@ def _run_inference(video_name: str, prediction_type: str) -> None:
 
 
 def _run_tracking(video_name: str) -> None:
+    try:
+        from omegaconf import OmegaConf
+    except ImportError as exc:
+        raise ImportError(
+            "OmegaConf is required for tracking. Install it with 'pip install omegaconf'."
+        ) from exc
+
     cfg = OmegaConf.load(f"{env_paths.CODE_BASE}/configs/tracking.yaml")
     cfg.video_name = video_name
     run_tracking(cfg)
